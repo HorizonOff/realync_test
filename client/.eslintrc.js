@@ -2,7 +2,7 @@
 module.exports = {
   extends: [
     'plugin:vue/recommended',
-    'plugin:prettier-vue/recommended',
+    // 'plugin:prettier-vue/recommended',
     // Do not add `'prettier/vue'` if you don't want to use prettier for `<template>` blocks
     'prettier/vue',
   ],
@@ -76,8 +76,8 @@ module.exports = {
         // @see https://prettier.io/docs/en/options.html
         printWidth: 100,
         singleQuote: true,
-        semi: false,
-        trailingComma: 'es5',
+        semi: true,
+        trailingComma: 'es6',
       },
     ],
   },

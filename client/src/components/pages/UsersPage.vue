@@ -3,7 +3,7 @@
     <h3>Users</h3>
 
     <div class="card mt-5">
-      <b-alert v-if="errorMessage" show dismissible fade variant="danger">
+      <b-alert v-if="errorMessage" show="" dismissible fade variant="danger">
         {{this.errorMessage}}
       </b-alert>
       <div class="card-header">

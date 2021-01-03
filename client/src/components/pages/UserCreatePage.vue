@@ -3,26 +3,34 @@
     <h3>Add a new user</h3>
 
     <div class="card">
-      <b-alert v-if="errorMessage" show dismissible fade variant="danger">
+      <b-alert v-if="errorMessage" show="" dismissible fade variant="danger">
         {{this.errorMessage}}
       </b-alert>
       <div class="card-body">
         <form class="form-inline" @submit.prevent="submit">
           <div class="form-group">
-            <label>First Name</label>
-            <input v-model="userData.firstName" type="text" class="form-control ml-sm-2 mr-sm-4 my-2"  required>
+            <label>
+              First Name
+              <input v-model="userData.firstName" type="text" class="form-control ml-sm-2 mr-sm-4 my-2"  required>
+            </label>
           </div>
           <div class="form-group">
-            <label>Last Name</label>
-            <input v-model="userData.lastName" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            <label>
+              Last Name
+              <input v-model="userData.lastName" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            </label>
           </div>
           <div class="form-group">
-            <label>Email</label>
-            <input v-model="userData.email" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            <label>
+              Email
+              <input v-model="userData.email" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            </label>
           </div>
           <div class="form-group">
-            <label>Phone Number</label>
-            <input v-model="userData.phoneNumber" type="number" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            <label>
+              Phone Number
+              <input v-model="userData.phoneNumber" type="number" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            </label>
           </div>
           <div class="ml-auto text-right">
             <button type="submit" class="btn btn-primary my-2">Add</button>

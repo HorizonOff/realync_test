@@ -3,26 +3,34 @@
     <h3>Add a new user</h3>
 
     <div class="card">
-      <b-alert v-if="errorMessage" show dismissible fade variant="danger">
+      <b-alert v-if="errorMessage" show="" dismissible fade variant="danger">
         {{this.errorMessage}}
       </b-alert>
       <div class="card-body">
         <form class="form-inline" @submit.prevent="submit">
           <div class="form-group">
-            <label>Title</label>
-            <input v-model="eventData.title" type="text" class="form-control ml-sm-2 mr-sm-4 my-2"  required>
+            <label>
+              Title
+              <input v-model="eventData.title" type="text" class="form-control ml-sm-2 mr-sm-4 my-2"  required>
+            </label>
           </div>
           <div class="form-group">
-            <label>Description</label>
-            <input v-model="eventData.description" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            <label>
+              Description
+              <input v-model="eventData.description" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            </label>
           </div>
           <div class="form-group">
-            <label>Start Date</label>
-            <input v-model="eventData.startDate" type="date" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            <label>
+              Start Date
+              <input v-model="eventData.startDate" type="date" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            </label>
           </div>
           <div class="form-group">
-            <label>End Date</label>
-            <input v-model="eventData.endDate" type="date" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            <label>
+              End Date
+              <input v-model="eventData.endDate" type="date" class="form-control ml-sm-2 mr-sm-4 my-2" required>
+            </label>
           </div>
           <div class="ml-auto text-right">
             <button type="submit" class="btn btn-primary my-2">Add</button>

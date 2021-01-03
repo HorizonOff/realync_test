@@ -71,7 +71,7 @@ const userEvents = async (req, res) => {
     const userEvents = await UserEvent.find({ userId: { $in: id } }).lean();
     const userEventsIds = userEvents.map(el => el.eventId);
 
-    const events = await Event.find({ _id: { $in: userEventsIds } });
+    const events = await Event.find({ _id: { $in: userEventsIds } }).lean();
 
     const mappedEvents = events.map(event => {
         event.formattedStartDate = dateformat(event.startDate, 'dd.mm.yyyy');
@@ -83,7 +83,7 @@ const userEvents = async (req, res) => {
     return successRes(res, mappedEvents);
 }
 
-const createEvent = async (req, res, next) => {
+const createEvent = async (req, res) => {
     const { title, description, startDate, endDate, userId } = req.body;
 
     const userEvents = await UserEvent.find({ userId: { $in: userId } }).lean();
@@ -91,8 +91,8 @@ const createEvent = async (req, res, next) => {
 
     if (userEventsIds.length) {
         const events = await Event.find({ _id: { $in: userEventsIds }} &&
-            { startDate: { $gte: new Date(startDate), $lt: new Date(endDate) }} ||
-            { endDate: { $gte: new Date(startDate), $lt: new Date(endDate) }});
+            { startDate: { $gte: new Date(startDate), $lte: new Date(endDate) }} ||
+            { endDate: { $gte: new Date(startDate), $lte: new Date(endDate) }});
 
         if (events.length) {
             return errorRes(res, 400, 'You can’t create event for this time');
