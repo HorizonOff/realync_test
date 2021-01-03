@@ -1,6 +1,7 @@
 const User = require('../models/User.model');
 const UserEvent = require('../models/UserEvent.model');
 const Event = require('../models/Event.model');
+const dateformat = require('dateformat');
 const _ = require('lodash');
 const { successRes, errorRes } = require('../helpers/Response.helper');
 const ObjectId = require('mongodb').ObjectID;
@@ -50,15 +51,16 @@ const index = async (req, res) => {
         let usersStartDate;
 
         if (usersEventsCount.length !== 0) {
-            eventsSum = usersEventsCount.find(el => el.userId === user._id.toString());
+            eventsSum = usersEventsCount.find(el => el._id === user._id.toString());
             usersStartDate = usersLastStartDate.find(el => el.userId === user._id.toString());
         }
 
         user.userEvents = (eventsSum && eventsSum.sum) || 0;
-        user.usersStartDate = (usersStartDate && usersStartDate.startDate);
+        user.usersStartDate = (usersStartDate && dateformat(usersStartDate.startDate, 'dd.mm.yyyy')) || '-';
+        user.userName = user.firstName + ' ' + user.lastName;
 
         return user;
-    })
+    });
 
     return successRes(res, mappedUsers);
 }
@@ -69,31 +71,49 @@ const userEvents = async (req, res) => {
     const userEvents = await UserEvent.find({ userId: { $in: id } }).lean();
     const userEventsIds = userEvents.map(el => el.eventId);
 
-    const events = await Event.find({ _id: { $in: userEventsIds } })
+    const events = await Event.find({ _id: { $in: userEventsIds } });
 
-    return successRes(res, events);
+    const mappedEvents = events.map(event => {
+        event.formattedStartDate = dateformat(event.startDate, 'dd.mm.yyyy');
+        event.formattedEndDate = dateformat(event.endDate, 'dd.mm.yyyy');
+
+        return event;
+    });
+
+    return successRes(res, mappedEvents);
 }
 
 const createEvent = async (req, res, next) => {
     const { title, description, startDate, endDate, userId } = req.body;
 
-    const events  = await Event.find({ $gte: new Date(startDate), $lte: new Date(endDate) });
+    const userEvents = await UserEvent.find({ userId: { $in: userId } }).lean();
+    const userEventsIds = userEvents.map(el => el.eventId);
 
-    if (events) {
-        return errorRes(res, 400, 'You can’t create event for this time');
+    if (userEventsIds.length) {
+        const events = await Event.find({ _id: { $in: userEventsIds }} &&
+            { startDate: { $gte: new Date(startDate), $lt: new Date(endDate) }} ||
+            { endDate: { $gte: new Date(startDate), $lt: new Date(endDate) }});
+
+        if (events.length) {
+            return errorRes(res, 400, 'You can’t create event for this time');
+        }
     }
 
     if (title && description && startDate && endDate && userId) {
-        const userEvent = await Event.create(req.body);
+        const event = await Event.create(req.body);
 
-        return successRes(res, userEvent)
+        const userEventParams = { eventId: event._id, userId: userId }
+
+        if (event) { await UserEvent.create(userEventParams); }
+
+        return successRes(res, event);
     }
 
     return errorRes(res, 400, 'Bad request');
 }
 
 const createUser = async(params) => {
-    const { firstName, lastName, email, phoneNumber } = params
+    const { firstName, lastName, email, phoneNumber } = params;
 
     if (firstName && lastName && email && phoneNumber) {
         return await User.create(params);
@@ -109,7 +129,7 @@ const create = async (req, res) => {
     try {
         await createUser(req.body);
 
-        return successRes(res)
+        return successRes(res);
     } catch (err) {
         return errorRes(res, err.code, err.message);
     }
